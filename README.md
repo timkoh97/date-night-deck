@@ -1,4 +1,4 @@
-# date-night-deck
+# Date Night Deck
 A simple web app that displays a deck of cards and get-to-know-you questions for great chats on a date night.
 
 This version includes spiritual / Christian questions to talk about calling and stories of faith.
