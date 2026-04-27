@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Date Night Deck</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f0eb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 500;
+      color: #1a1a2e;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 2rem;
+    }
+
+    .card-stage {
+      background: #ede8e2;
+      border-radius: 24px;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-wrapper {
+      perspective: 1000px;
+      width: 260px;
+      height: 370px;
+      cursor: pointer;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+
+    .card.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: #fff;
+      user-select: none;
+    }
+
+    .card-back-face { transform: rotateY(180deg); }
+
+    .back-pattern {
+      width: 100%;
+      height: 100%;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #5b8db8;
+      overflow: hidden;
+    }
+
+    .back-inner {
+      width: calc(100% - 16px);
+      height: calc(100% - 16px);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .back-logo {
+      font-size: 40px;
+      color: #ffffff;
+    }
+
+    .question-face {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .q-corner { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; }
+    .q-corner.q-bottom { align-items: flex-end; transform: rotate(180deg); }
+    .q-rank { font-size: 18px; font-weight: 500; }
+    .q-suit { font-size: 14px; }
+    .red { color: #c0392b; }
+    .black { color: #1a1a2e; }
+
+    .q-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 6px;
+      gap: 14px;
+    }
+
+    .q-text {
+      font-size: 15px;
+      line-height: 1.55;
+      font-weight: 400;
+      color: #1a1a2e;
+    }
+
+    .q-cat {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .face-card-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .face-initial { font-size: 52px; font-weight: 500; line-height: 1; }
+    .face-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.4; }
+
+    .hint {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-id {
+      font-size: 12px;
+      color: #999;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .prog-wrap {
+      width: 260px;
+      height: 3px;
+      background: #ddd;
+      border-radius: 2px;
+      margin-bottom: 1.25rem;
+    }
+
+    .prog-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: #555;
+      transition: width 0.4s;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 9px 20px;
+      font-size: 14px;
+      color: #1a1a2e;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+
+    .btn:hover { background: #f5f0eb; }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-shuffle {
+      font-size: 13px;
+      color: #888;
+      padding: 7px 18px;
+      border-color: #e8e8e8;
+    }
+
+    .counter {
+      font-size: 13px;
+      color: #888;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    @media (max-width: 400px) {
+      .card-wrapper { width: 220px; height: 314px; }
+      .prog-wrap { width: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Date Night Deck</h1>
+  <p class="subtitle">Tap a card to reveal a question</p>
+
+  <div class="card-stage">
+    <div class="card-wrapper" id="cardWrapper" onclick="handleFlip()">
+      <div class="card" id="card">
+        <div class="card-face" id="frontFace">
+          <div class="back-pattern">
+            <div class="back-inner">
+              <span class="back-logo">✦</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-face card-back-face" id="backFace"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint" id="hintText">Tap the card to reveal a question</p>
+  <p class="card-id" id="cardId"></p>
+
+  <div class="prog-wrap">
+    <div class="prog-fill" id="progFill" style="width:0%"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" onclick="prevCard()">← Back</button>
+    <span class="counter" id="counter">1 / 52</span>
+    <button class="btn" onclick="nextCard()">Next →</button>
+  </div>
+
+  <button class="btn btn-shuffle" onclick="shuffleDeck()">Shuffle deck</button>
+
+  <script>
+    const SUITS = [
+      { sym: '♥', name: 'Hearts', color: 'red' },
+      { sym: '♦', name: 'Diamonds', color: 'red' },
+      { sym: '♣', name: 'Clubs', color: 'black' },
+      { sym: '♠', name: 'Spades', color: 'black' },
+    ];
+    const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+    const FACE_NAMES = { J: 'Jack', Q: 'Queen', K: 'King', A: 'Ace' };
+
+    const CAT_STYLES = {
+      fun:        { bg: '#eaf3de', color: '#3B6D11', label: 'fun' },
+      meaningful: { bg: '#EEEDFE', color: '#534AB7', label: 'meaningful' },
+      nostalgic:  { bg: '#FAEEDA', color: '#854F0B', label: 'nostalgic' },
+      romantic:   { bg: '#FBEAF0', color: '#993556', label: 'romantic' },
+      spiritual:  { bg: '#E6F1FB', color: '#185FA5', label: 'spiritual' },
+    };
+
+    const questions = [
+      { q: "What's the most spontaneous thing you've ever done?", cat: "fun" },
+      { q: "If we could wake up anywhere tomorrow, where would you choose?", cat: "fun" },
+      { q: "If you could have dinner with any three people, alive or dead, who'd you pick?", cat: "fun" },
+      { q: "What's something you believed as a child that turned out to be completely wrong?", cat: "fun" },
+      { q: "What's a small, everyday luxury you'd never want to give up?", cat: "fun" },
+      { q: "What's a subject you could talk about for hours without ever getting bored?", cat: "fun" },
+      { q: "What's the funniest thing that's ever happened to you on a trip?", cat: "fun" },
+      { q: "If you could master any skill overnight, what would it be?", cat: "fun" },
+      { q: "What's a book, film, or album you wish you could experience for the first time again?", cat: "fun" },
+      { q: "What's something you've always wanted to learn but haven't yet?", cat: "meaningful" },
+      { q: "What's the most thoughtful gift anyone has ever given you?", cat: "meaningful" },
+      { q: "What does feeling truly at home feel like to you?", cat: "meaningful" },
+      { q: "What's a goal for the next five years that excites you most?", cat: "meaningful" },
+      { q: "If you could change one decision you've made, would you — and which one?", cat: "meaningful" },
+      { q: "What does love look like in practice, day to day, for you?", cat: "meaningful" },
+      { q: "What's a fear you've managed to overcome, even a little?", cat: "meaningful" },
+      { q: "What's something you haven't told many people about yourself?", cat: "meaningful" },
+      { q: "What's the best piece of advice you've ever been given?", cat: "meaningful" },
+      { q: "What's something you're proud of that you don't talk about much?", cat: "meaningful" },
+      { q: "What's a dream you've quietly held for a long time?", cat: "meaningful" },
+      { q: "What's something you've changed your mind about in the last few years?", cat: "meaningful" },
+      { q: "What does feeling truly understood by someone feel like to you?", cat: "meaningful" },
+      { q: "What's something your younger self would be surprised to know about you now?", cat: "meaningful" },
+      { q: "What did you think of me the very first time we met?", cat: "nostalgic" },
+      { q: "If you could relive one day from your childhood, which would it be?", cat: "nostalgic" },
+      { q: "What's a holiday or trip that left a real mark on you?", cat: "nostalgic" },
+      { q: "What's one thing from your childhood home you wish you still had?", cat: "nostalgic" },
+      { q: "What's a family tradition you'd like to continue?", cat: "nostalgic" },
+      { q: "What's a smell, sound, or taste that instantly takes you back somewhere?", cat: "nostalgic" },
+      { q: "What's something about your culture or upbringing you really value?", cat: "nostalgic" },
+      { q: "What's your earliest memory of feeling truly happy?", cat: "nostalgic" },
+      { q: "If you could give your teenage self one piece of advice, what would it be?", cat: "nostalgic" },
+      { q: "What small thing do I do that always makes you smile?", cat: "romantic" },
+      { q: "What was the moment you knew you really liked me?", cat: "romantic" },
+      { q: "What's something you'd love for us to experience together that we haven't yet?", cat: "romantic" },
+      { q: "What's something I do that you find genuinely attractive?", cat: "romantic" },
+      { q: "What's one thing you'd want me to know about how you feel right now?", cat: "romantic" },
+      { q: "What quality in me do you admire most?", cat: "romantic" },
+      { q: "What does a perfect evening in look like to you?", cat: "romantic" },
+      { q: "What's something small we could do more often that you'd love?", cat: "romantic" },
+      { q: "What's a moment in our relationship that made you think 'yes, this is right'?", cat: "romantic" },
+      { q: "What's a moment in your life where you saw God genuinely show up?", cat: "spiritual" },
+      { q: "Has your relationship with God changed in any unexpected way in the last few years?", cat: "spiritual" },
+      { q: "What does your prayer life look like day-to-day — and how do you feel about it?", cat: "spiritual" },
+      { q: "Is there a passage of Scripture that has felt particularly significant to you recently?", cat: "spiritual" },
+      { q: "What does genuine worship feel like for you at its best — and what gets in the way of that?", cat: "spiritual" },
+      { q: "Is there any particular doubt or question you're finding hard or wrestling with right now?", cat: "spiritual" },
+      { q: "Have you ever gone through a season where God felt distant? What was that like?", cat: "spiritual" },
+      { q: "Do you have a sense of what God might be asking of you in this season?", cat: "spiritual" },
+      { q: "Is there anything you feel called to that you haven't yet stepped into?", cat: "spiritual" },
+      { q: "What would it mean to you for us to be spiritually close as a couple?", cat: "spiritual" },
+      { q: "What does it look like to you for a relationship to have God at the centre?", cat: "spiritual" },
+    ];
+
+    function buildDeck() {
+      const deck = [];
+      let qi = 0;
+      for (let s = 0; s < 4; s++) {
+        for (let r = 0; r < 13; r++) {
+          deck.push({ suit: SUITS[s], rank: RANKS[r], question: questions[qi % questions.length] });
+          qi++;
+        }
+      }
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      return deck;
+    }
+
+    let deck = buildDeck();
+    let current = 0;
+    let flipped = false;
+
+    function isFaceCard(rank) { return ['J','Q','K','A'].includes(rank); }
+
+    function renderBackFace(card) {
+      const { suit, rank, question } = card;
+      const col = suit.color;
+      const cat = CAT_STYLES[question.cat];
+      const face = document.getElementById('backFace');
+
+      let centerHTML = '';
+      if (isFaceCard(rank)) {
+        centerHTML = `<div class="face-card-inner">
+          <div class="face-initial ${col}">${rank}</div>
+          <div class="face-label" style="color:${col === 'red' ? '#c0392b' : '#1a1a2e'};">${FACE_NAMES[rank]}</div>
+          <div style="font-size:28px;">${suit.sym}</div>
+        </div>`;
+      } else {
+        const count = parseInt(rank) || 1;
+        const pips = Array(count).fill(`<span style="font-size:${count > 8 ? 18 : 22}px;">${suit.sym}</span>`).join('');
+        centerHTML = `<div style="flex:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;padding:4px 10px;">${pips}</div>`;
+      }
+
+      face.innerHTML = `<div class="question-face">
+        <div class="q-corner">
+          <div class="q-rank ${col}">${rank}</div>
+          <div class="q-suit ${col}">${suit.sym}</div>
+        </div>
+        <div class="q-body">
+          <p class="q-text">${question.q}</p>
+          <span class="q-cat" style="background:${cat.bg};color:${cat.color};">${cat.label}</span>
+        </div>
+        <div class="q-corner q-bottom">
+          <div class="q-rank ${col}">${rank}</div>
+          <div class="q-suit ${col}">${suit.sym}</div>
+        </div>
+      </div>`;
+    }
+
+    function renderCard() {
+      const card = deck[current];
+      renderBackFace(card);
+      document.getElementById('counter').textContent = (current + 1) + ' / 52';
+      document.getElementById('progFill').style.width = Math.round((current + 1) / 52 * 100) + '%';
+      document.getElementById('cardId').textContent = card.rank + ' of ' + card.suit.name;
+    }
+
+    function playFlipSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const duration = 0.15;
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(300, ctx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + duration);
+
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + duration);
+        oscillator.onended = () => ctx.close();
+      } catch (e) {}
+    }
+
+    function handleFlip() {
+      playFlipSound();
+      flipped = !flipped;
+      document.getElementById('card').classList.toggle('flipped', flipped);
+      document.getElementById('hintText').textContent = flipped ? 'Tap again to flip back' : 'Tap the card to reveal a question';
+    }
+
+    function goTo(idx) {
+      current = idx;
+      flipped = false;
+      document.getElementById('card').classList.remove('flipped');
+      document.getElementById('hintText').textContent = 'Tap the card to reveal a question';
+      renderCard();
+    }
+
+    function nextCard() { if (current < 51) goTo(current + 1); }
+    function prevCard() { if (current > 0) goTo(current - 1); }
+
+    function shuffleDeck() {
+      deck = buildDeck();
+      goTo(0);
+    }
+
+    renderCard();
+  </script>
+</body>
+</html>
