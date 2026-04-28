@@ -10,3 +10,7 @@ v1.0 2026-04-27 - 20:17
 - Simple app
 - 52 cards / questions
 - Sound effect on flipping card (HTML-based, no other files necessary)
+
+## Features in consideration
+
+- A new deck for friends - with fun questions and deep, meaningful questions
